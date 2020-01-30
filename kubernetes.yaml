@@ -93,7 +93,7 @@ spec:
         effect: NoSchedule
       containers:
       - name: kube-node-cloudwatch
-        image: quay.io/ssuareza/kube-node-cloudwatch:latest
+        image: quay.io/typeform/kube-node-cloudwatch:stable
         resources:
           limits:
             memory: 100Mi
