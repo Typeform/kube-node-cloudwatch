@@ -8,6 +8,12 @@ CLUSTER=$(aws ec2 describe-tags --region $REGION --filters "Name=resource-id,Val
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
 
 while [ 1 ]; do
+    STATUS=$(kubectl get node $HOSTNAME |grep Ready|awk '{print $2}')
+    if [ "$STATUS" != "Ready" ];then
+        sleep 10
+        continue
+    fi
+
     CPU=$(kubectl describe node $HOSTNAME |grep -A 10 "Allocated resources"|grep cpu |awk '{print $3}'| tr -d '(,),%')
     MEM=$(kubectl describe node $HOSTNAME |grep -A 10 "Allocated resources"|grep memory |awk '{print $3}'| tr -d '(,),%')
     aws cloudwatch put-metric-data --region $REGION --metric-name CPUAllocation --namespace EKS --unit None --value ${CPU} --dimensions ClusterName=${CLUSTER},NodeName=shared
